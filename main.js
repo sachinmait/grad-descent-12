@@ -12,7 +12,17 @@ tabs.forEach(tab => {
 
         // Resize plots if needed when tab becomes visible
         if (tab.dataset.tab === 'threedim') {
-            Plotly.relayout('plotly-3d', { autosize: true });
+            if (typeof Plotly !== 'undefined') {
+                Plotly.relayout('plotly-3d', { autosize: true });
+            }
+        }
+        // Resize 1D canvas when tab becomes visible
+        if (tab.dataset.tab === 'onedim') {
+            resizeCanvas();
+        }
+        // Resize lab canvas when tab becomes visible
+        if (tab.dataset.tab === 'labs') {
+            resizeLabCanvas();
         }
     });
 });
@@ -215,6 +225,20 @@ update1DDisplay();
 const zFunc = (x, y) => x * x + y * y; // Simple Bowl
 
 function init3D() {
+    // Check if Plotly is available
+    if (typeof Plotly === 'undefined') {
+        const errorMessage = `
+            <div style="display: flex; align-items: center; justify-content: center; 
+                        height: 100%; font-size: 1.2rem; font-weight: bold; 
+                        text-align: center; padding: 2rem;">
+                ⚠️ Plotly library could not be loaded.<br>
+                Please check your internet connection or browser settings.
+            </div>
+        `;
+        document.getElementById('plotly-3d').innerHTML = errorMessage;
+        return;
+    }
+    
     const x = [];
     const y = [];
     const z = [];
@@ -319,6 +343,11 @@ document.getElementById('input-3d-lr').addEventListener('input', (e) => {
 
 // Run 3D Descent
 document.getElementById('btn-3d-run').addEventListener('click', () => {
+    if (typeof Plotly === 'undefined') {
+        alert('Plotly library is not available. Please check your internet connection.');
+        return;
+    }
+    
     let curX = state3d.x;
     let curY = state3d.y;
     let lr = state3d.lr;
@@ -351,13 +380,16 @@ document.getElementById('btn-3d-run').addEventListener('click', () => {
         marker: { size: 4, color: 'red' }
     };
 
-    Plotly.deleteTraces('plotly-3d', [1]); // remove old path if any (assuming index 1)
+    Plotly.deleteTraces('plotly-3d', [1]).catch((err) => console.log('No trace to delete:', err)); // remove old path if any (assuming index 1)
     Plotly.addTraces('plotly-3d', pathTrace);
 });
 
 
 document.getElementById('btn-3d-reset').addEventListener('click', () => {
-    Plotly.deleteTraces('plotly-3d', [1]);
+    if (typeof Plotly === 'undefined') {
+        return;
+    }
+    Plotly.deleteTraces('plotly-3d', [1]).catch((err) => console.log('No trace to delete:', err));
 });
 
 /* =========================================
