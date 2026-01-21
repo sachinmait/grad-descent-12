@@ -227,9 +227,15 @@ const zFunc = (x, y) => x * x + y * y; // Simple Bowl
 function init3D() {
     // Check if Plotly is available
     if (typeof Plotly === 'undefined') {
-        document.getElementById('plotly-3d').innerHTML = 
-            '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; font-weight: bold; text-align: center; padding: 2rem;">' +
-            '⚠️ Plotly library could not be loaded.<br>Please check your internet connection or browser settings.</div>';
+        const errorMessage = `
+            <div style="display: flex; align-items: center; justify-content: center; 
+                        height: 100%; font-size: 1.2rem; font-weight: bold; 
+                        text-align: center; padding: 2rem;">
+                ⚠️ Plotly library could not be loaded.<br>
+                Please check your internet connection or browser settings.
+            </div>
+        `;
+        document.getElementById('plotly-3d').innerHTML = errorMessage;
         return;
     }
     
@@ -374,7 +380,7 @@ document.getElementById('btn-3d-run').addEventListener('click', () => {
         marker: { size: 4, color: 'red' }
     };
 
-    Plotly.deleteTraces('plotly-3d', [1]).catch(() => {}); // remove old path if any (assuming index 1)
+    Plotly.deleteTraces('plotly-3d', [1]).catch((err) => console.log('No trace to delete:', err)); // remove old path if any (assuming index 1)
     Plotly.addTraces('plotly-3d', pathTrace);
 });
 
@@ -383,7 +389,7 @@ document.getElementById('btn-3d-reset').addEventListener('click', () => {
     if (typeof Plotly === 'undefined') {
         return;
     }
-    Plotly.deleteTraces('plotly-3d', [1]).catch(() => {});
+    Plotly.deleteTraces('plotly-3d', [1]).catch((err) => console.log('No trace to delete:', err));
 });
 
 /* =========================================
