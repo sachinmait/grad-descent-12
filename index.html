@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Load Plotly for 3D Viz -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+
+<body>
+
+    <header class="neo-card">
+        <h1>Gradient Descent Explorer</h1>
+        <p>THE MATHEMATICS OF OPTIMIZATION</p>
+    </header>
+
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="intuition">Intuition</button>
+        <button class="tab-btn" data-tab="onedim">1D Playground</button>
+        <button class="tab-btn" data-tab="threedim">3D Surface</button>
+        <button class="tab-btn" data-tab="labs">Learning Rates</button>
+    </nav>
+
+    <!-- INTUITION TAB -->
+    <main id="intuition" class="tab-pane neo-card active">
+        <h2>The Foggy Mountain</h2>
+        <div class="flex-row" style="align-items: flex-start;">
+            <div style="flex: 1;">
+                <p>Imagine you are hiking on a mountain in a thick fog. You want to get to the very bottom (the lowest
+                    point).</p>
+                <p>You can't see the bottom, but you can feel the <strong>slope</strong> under your feet.</p>
+                <div class="neo-card" style="background-color: #000; color: #fff;">
+                    <h3 style="color: #fff; border-bottom: 2px solid #fff;">The Algorithm</h3>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Check the slope at your current position.</li>
+                        <li>Take a step in the <strong>opposite</strong> direction of the slope.</li>
+                        <li>Repeat until the slope is flat (you are at the bottom).</li>
+                    </ol>
+                </div>
+            </div>
+            <div style="flex: 1; text-align: center; border: 4px solid black; padding: 2rem;">
+                <!-- Simple CSS Graphic Placeholder -->
+                <div style="font-size: 5rem;">🏔️ 📉</div>
+                <p style="font-family: monospace; font-weight: bold; margin-top: 1rem;">GOAL: MINIMIZE LOSS</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 1D PLAYGROUND TAB -->
+    <main id="onedim" class="tab-pane neo-card">
+        <h2>1D Descent: The Parabola</h2>
+        <p>Minimize the function <code>f(x) = x²</code></p>
+
+        <!-- Canvas for 1D Viz -->
+        <div class="viz-canvas-container" id="canvas-container-1d">
+            <canvas id="canvas-1d"></canvas>
+        </div>
+
+        <div class="controls-area">
+            <div class="control-group">
+                <label>Starting Position X: <span id="val-x">4</span></label>
+                <input type="range" id="input-x" min="-5" max="5" step="0.1" value="4">
+            </div>
+            <div class="control-group">
+                <label>Learning Rate (α): <span id="val-lr">0.1</span></label>
+                <input type="range" id="input-lr" min="0.01" max="1.2" step="0.01" value="0.1">
+            </div>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center;">
+            <button class="neo-btn" id="btn-step">Step-by-Step</button>
+            <button class="neo-btn" id="btn-run">Auto Run</button>
+            <button class="neo-btn" id="btn-reset">Reset</button>
+        </div>
+
+        <div class="neo-card" style="margin-top: 1rem; background: #000; color: #fff;">
+            <p style="font-family: monospace;">Current X: <span id="disp-x">4.00</span></p>
+            <p style="font-family: monospace;">Slope (2x): <span id="disp-slope">8.00</span></p>
+            <p style="font-family: monospace; color: #FFF; border-top: 1px solid #555; padding-top: 0.5rem;">
+                New X = <span id="x-old">4.00</span> - (<span id="disp-lr">0.1</span> × <span
+                    id="disp-grad">8.00</span>) = <span id="x-new">3.20</span>
+            </p>
+        </div>
+    </main>
+
+    <!-- 3D SURFACE TAB -->
+    <main id="threedim" class="tab-pane neo-card">
+        <h2>3D Descent: The Bowl</h2>
+        <p>Minimize <code>z = x² + y²</code></p>
+
+        <!-- Plotly Container -->
+        <div id="plotly-3d" style="width: 100%; height: 500px; border: 4px solid black;"></div>
+
+        <div class="controls-area">
+            <div class="control-group">
+                <label>Start X: <span id="val-3d-x">4</span></label>
+                <input type="range" id="input-3d-x" min="-5" max="5" step="0.5" value="4">
+            </div>
+            <div class="control-group">
+                <label>Start Y: <span id="val-3d-y">4</span></label>
+                <input type="range" id="input-3d-y" min="-5" max="5" step="0.5" value="4">
+            </div>
+            <div class="control-group">
+                <label>Learning Rate: <span id="val-3d-lr">0.1</span></label>
+                <input type="range" id="input-3d-lr" min="0.05" max="1.0" step="0.05" value="0.1">
+            </div>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center;">
+            <button class="neo-btn" id="btn-3d-run">Run Descent</button>
+            <button class="neo-btn" id="btn-3d-reset">Reset</button>
+        </div>
+    </main>
+
+    <!-- LABS TAB -->
+    <main id="labs" class="tab-pane neo-card">
+        <h2>Learning Rate Labs</h2>
+        <p>Observe how different Learning Rates (α) affect convergence.</p>
+
+        <div class="flex-row" style="justify-content: space-around;">
+            <button class="neo-btn" id="preset-slow" style="flex:1;">
+                🐢 Too Slow<br><small>(α = 0.01)</small>
+            </button>
+            <button class="neo-btn" id="preset-good" style="flex:1;">
+                🐇 Just Right<br><small>(α = 0.2)</small>
+            </button>
+            <button class="neo-btn" id="preset-fast" style="flex:1; background: #000; color: #fff;">
+                🚀 Oshoom / Diverge<br><small>(α = 1.1)</small>
+            </button>
+        </div>
+
+        <div id="lab-canvas-container" class="viz-canvas-container" style="height: 300px; margin-top: 2rem;">
+            <canvas id="canvas-lab"></canvas>
+        </div>
+        <p id="lab-status" class="text-center mt-2" style="font-weight: bold;">Select a scenario above.</p>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
